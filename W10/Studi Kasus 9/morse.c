@@ -2,18 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "morse.h"
 
 #define MAX_MORSE 10
 #define MAX_LINE 256
 
-// Struktur Node Binary Tree
-typedef struct Node {
-    char data;
-    struct Node* left;  // untuk titik (.)
-    struct Node* right; // untuk strip (-)
-} Node;
-
-// Buat node baru
 Node* createNode(char data) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->data = data;
@@ -21,7 +14,6 @@ Node* createNode(char data) {
     return newNode;
 }
 
-// Insert ke dalam tree berdasarkan kode morse
 void insert(Node* root, const char* code, char letter) {
     Node* current = root;
     while (*code) {
@@ -39,18 +31,17 @@ void insert(Node* root, const char* code, char letter) {
     current->data = letter;
 }
 
-// Membangun pohon Morse
 void buildMorseTree(Node* root) {
     struct { char letter; char* code; } table[] = {
         {'A', "."},    {'B', "-"},  {'C', ".."},  {'D', ".-"},   {'E', "-."},
         {'F', "--"},  {'G', "..."},   {'H', "..-"},  {'I', ".-."},    {'J', ".--"},
-        {'K', "-.."},   {'L', "-.-"},  {'M', "--."},    {'N', "---"},    {'O', "..."},
+        {'K', "-.."},   {'L', "-.-"},  {'M', "--."},    {'N', "---"},    {'O', "...."},
         {'P', "...-"},  {'Q', "..-."},  {'R', "..--"},   {'S', ".-.."},   {'T', ".-.-"},
         {'U', ".--."},   {'V', ".---"},  {'W', "-..."},   {'X', "-..-"},  {'Y', "-.-."},
         {'Z', "-.--"},
         {'1', "--.."}, {'2', "--.-"},{'3', "---."}, {'4', "----"}, {'5', "..-.."},
         {'6', "..-.-"}, {'7', ".-.-."},{'8', ".-.--"}, {'9', "-.-.."}, {'0', "-.-.-"},
-        {' ', "--.-."} // kode khusus untuk spasi
+        {' ', "--.-."}
     };
 
     for (int i = 0; i < sizeof(table) / sizeof(table[0]); i++) {
@@ -58,7 +49,6 @@ void buildMorseTree(Node* root) {
     }
 }
 
-// Inorder traversal untuk testing
 void inorder(Node* root) {
     if (root) {
         inorder(root->left);
@@ -68,13 +58,12 @@ void inorder(Node* root) {
     }
 }
 
-// Encode karakter ke Morse
 char* getMorse(char c) {
     c = toupper(c);
     struct { char letter; char* code; } table[] = {
         {'A', "."},    {'B', "-"},  {'C', ".."},  {'D', ".-"},   {'E', "-."},
         {'F', "--"},  {'G', "..."},   {'H', "..-"},  {'I', ".-."},    {'J', ".--"},
-        {'K', "-.."},   {'L', "-.-"},  {'M', "--."},    {'N', "---"},    {'O', "..."},
+        {'K', "-.."},   {'L', "-.-"},  {'M', "--."},    {'N', "---"},    {'O', "...."},
         {'P', "...-"},  {'Q', "..-."},  {'R', "..--"},   {'S', ".-.."},   {'T', ".-.-"},
         {'U', ".--."},   {'V', ".---"},  {'W', "-..."},   {'X', "-..-"},  {'Y', "-.-."},
         {'Z', "-.--"},
@@ -89,17 +78,15 @@ char* getMorse(char c) {
     return "";
 }
 
-// Encode string ke Morse
 void encode(const char* text) {
     for (int i = 0; i < strlen(text); i++) {
         char* code = getMorse(text[i]);
         if (*code)
-            printf("%s  ", code); // dua spasi antar huruf
+            printf("%s  ", code);
     }
     printf("\n");
 }
 
-// Decode kode Morse ke huruf
 char decodeLetter(Node* root, const char* code) {
     Node* current = root;
     while (*code) {
@@ -112,7 +99,6 @@ char decodeLetter(Node* root, const char* code) {
     return current ? current->data : '?';
 }
 
-// Decode string Morse ke teks
 void decode(Node* root, const char* morse) {
     char buffer[MAX_MORSE];
     int index = 0;
@@ -127,15 +113,13 @@ void decode(Node* root, const char* morse) {
             buffer[index++] = morse[i];
         }
 
-        // dua spasi ? pemisah huruf
         if (morse[i] == ' ' && morse[i+1] == ' ') {
-            i++; // lewati spasi kedua
+            i++;
         }
     }
     printf("\n");
 }
 
-// Encode isi file
 void encodeFile(Node* root, const char* infile, const char* outfile) {
     FILE* in = fopen(infile, "r");
     FILE* out = fopen(outfile, "w");
@@ -160,24 +144,3 @@ void encodeFile(Node* root, const char* infile, const char* outfile) {
     fclose(out);
     printf("File berhasil dikonversi ke Morse dan disimpan di %s\n", outfile);
 }
-
-// Main Program
-int main() {
-    Node* root = createNode(' ');
-    buildMorseTree(root);
-
-    printf("1. Inorder traversal pohon Morse:\n");
-    inorder(root);
-
-    printf("\n\n2. Encode teks: \"JTK Politeknik Negeri Bandung\"\n");
-    encode("JTK Politeknik Negeri Bandung");
-
-    printf("\n3. Decode Morse:\n");
-    decode(root, ".-  -.-.  ..-.  .-..-..-..-.  -...  ..  ...  .-");
-
-    printf("\n4. Encode dari file input.txt ke out.txt\n");
-    encodeFile(root, "input.txt", "out.txt");
-
-    return 0;
-}
-

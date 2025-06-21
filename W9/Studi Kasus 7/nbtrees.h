@@ -62,7 +62,7 @@ void PrintTree (Isi_Tree P);
 
 /***** Search *****/
 boolean Search (Isi_Tree P, infotype X);
-/* Mengirimkan true jika ada node dari P yang bernilai X * 
+/* Mengirimkan true jika ada node dari P yang bernilai X *
 
 /***** Fungsi Lain *****/
 int nbElmt (Isi_Tree P);
@@ -82,4 +82,6 @@ int Depth (Isi_Tree P);
 int Max (infotype Data1, infotype Data2);
 /* Mengirimkan Nilai terbesar dari dua data */
 
+boolean Compare (Isi_Tree P, Isi_Tree Q);
+/* Mengirimkan true jika P dan Q sama*/
 #endif

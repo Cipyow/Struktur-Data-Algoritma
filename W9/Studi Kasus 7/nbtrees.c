@@ -1,21 +1,19 @@
 #include "nbtrees.h"
 
 void Create_tree(Isi_Tree X, int Jml_Node) {
-    // Inisialisasi seluruh array dengan nilai kosong
     for (int i = 1; i <= jml_maks; i++) {
-        X[i].info = '\0';  // Info kosong
-        X[i].ps_fs = 0;    // Tidak ada first son
-        X[i].ps_nb = 0;    // Tidak ada next brother
-        X[i].ps_pr = 0;    // Tidak ada parent
+        X[i].info = '\0';
+        X[i].ps_fs = 0;
+        X[i].ps_nb = 0;
+        X[i].ps_pr = 0;
     }
     
-    // Input data hanya untuk node yang diperlukan
     for (int i = 1; i <= Jml_Node; i++) {
         printf("Masukkan info node ke-%d : ", i);
         scanf(" %c", &X[i].info);
         
         if (i == 1) {
-            X[i].ps_pr = 0;  // Root tidak memiliki parent
+            X[i].ps_pr = 0;
         } else {
             printf("Masukkan parent dari node %d (indeks): ", i);
             scanf("%d", &X[i].ps_pr);
@@ -105,14 +103,19 @@ void PostOrder (Isi_Tree P) {
 
 
 void Level_order(Isi_Tree X, int Maks_node) {
-	if (IsEmpty(X)) {
-		printf("Tree kosong!\n");
-		return;
-	}
-	int i;
-	for (i = 1; i <= Maks_node; i++) {
-		printf("%c ", X[i].info);
-	}
+    if (IsEmpty(X)) {
+        printf("Tree kosong!\n");
+        return;
+    }
+    
+    int maxLevel = Depth(X);
+    for (int level = 0; level <= maxLevel; level++) {
+        for (int i = 1; i <= Maks_node; i++) {
+            if (X[i].info != '\0' && Level(X, X[i].info) == level) {
+                printf("%c ", X[i].info);
+            }
+        }
+    }
 }
 
 
@@ -122,7 +125,7 @@ void PrintTree(Isi_Tree P) {
         return;
     }
     for (int i = 1; i <= jml_maks; i++) {
-        if (P[i].info != '\0') {  // Hanya print node yang memiliki info valid
+        if (P[i].info != '\0') {
             printf("Node ke-%d: Info: %c, First Son: %d, Next Brother: %d, Parent: %d\n", 
                    i, P[i].info, P[i].ps_fs, P[i].ps_nb, P[i].ps_pr);
         }
@@ -167,7 +170,7 @@ int nbDaun (Isi_Tree P) {
 	
 	int i;
 	for (i = 1; i <= jml_maks; i++) {
-		if (P[i].info != '\0' && P[i].ps_fs == 0) { // Node daun tidak memiliki first son
+		if (P[i].info != '\0' && P[i].ps_fs == 0) {
 			count++;
 		}
 	}
@@ -179,12 +182,10 @@ int Level(Isi_Tree P, infotype X) {
         return -1;
     }
     
-    // Cari node dengan info X dan hitung levelnya
     for (int i = 1; i <= jml_maks; i++) {
         if (P[i].info == X) {
             int level = 0;
             int curr = i;
-            // Naik ke atas sampai root untuk menghitung level
             while (P[curr].ps_pr != 0) {
                 level++;
                 curr = P[curr].ps_pr;
@@ -192,7 +193,7 @@ int Level(Isi_Tree P, infotype X) {
             return level;
         }
     }
-    return -1; // Node tidak ditemukan
+    return -1;
 }
 
 int Depth(Isi_Tree P) {
@@ -201,17 +202,14 @@ int Depth(Isi_Tree P) {
     }
     
     int depth = -1;
-    // Periksa setiap node
     for (int i = 1; i <= jml_maks; i++) {
         if (P[i].info != '\0') {
             int level = 0;
             int curr = i;
-            // Hitung level node ini
             while (P[curr].ps_pr != 0) {
                 level++;
                 curr = P[curr].ps_pr;
             }
-            // Update depth jika level lebih dalam
             if (level > depth) {
                 depth = level;
             }
@@ -224,3 +222,11 @@ int Max (infotype Data1, infotype Data2) {
 	return (Data1 > Data2) ? Data1 : Data2;
 }
 
+boolean Compare (Isi_Tree P, Isi_Tree Q) {
+	for (int i = 1; i <= jml_maks; i++) {
+		if (P[i].info != Q[i].info || P[i].ps_fs != Q[i].ps_fs || P[i].ps_nb != Q[i].ps_nb || P[i].ps_pr != Q[i].ps_pr) {
+			return false;
+		}
+	}
+	return true;
+}

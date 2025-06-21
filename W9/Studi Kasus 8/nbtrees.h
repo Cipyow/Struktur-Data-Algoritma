@@ -82,4 +82,6 @@ int Depth (Isi_Tree P);
 int Max (infotype Data1, infotype Data2);
 /* Mengirimkan Nilai terbesar dari dua data */
 
+boolean Compare (Isi_Tree P, Isi_Tree Q);
+/* Mengirimkan true jika P dan Q sama*/
 #endif
